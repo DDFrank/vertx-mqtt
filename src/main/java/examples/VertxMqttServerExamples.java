@@ -274,4 +274,16 @@ public class VertxMqttServerExamples {
     DeploymentOptions options = new DeploymentOptions().setInstances(10);
     vertx.deployVerticle("com.mycompany.MyVerticle", options);
   }
+
+  /**
+   * Example for serving websocket connections
+   * @param vertx
+   */
+  public void example12(Vertx vertx) {
+
+    MqttServerOptions options = new MqttServerOptions()
+      .setUseWebsocket(true);
+
+    MqttServer mqttServer = MqttServer.create(vertx, options);
+  }
 }
