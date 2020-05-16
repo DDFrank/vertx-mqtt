@@ -35,11 +35,11 @@ import static org.eclipse.paho.client.mqttv3.MqttConnectOptions.MQTT_VERSION_3_1
  * (less then 24 characters)
  */
 @RunWith(VertxUnitRunner.class)
-public class MqttWebsocketServerClientIdentifierTest extends MqttServerBaseTest {
+public class MqttServerWebSocketClientIdentifierTest extends MqttServerBaseTest {
 
   @Before
   public void before(TestContext context) {
-    this.setUp(context, new MqttServerOptions().setUseWebsocket(true));
+    this.setUp(context, new MqttServerOptions().setUseWebSocket(true));
   }
 
   @After

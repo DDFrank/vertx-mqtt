@@ -16,6 +16,7 @@
 
 package io.vertx.mqtt.test.server;
 
+import io.netty.handler.codec.DecoderException;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.unit.Async;
@@ -31,63 +32,44 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.nio.charset.Charset;
-
 /**
- * MQTT server testing about clients publish
+ * MQTT server testing about the maximum message size
  */
 @RunWith(VertxUnitRunner.class)
-public class MqttWebsocketServerClientPublishTest extends MqttServerBaseTest {
+public class MqttServerWebSocketMaxMessageSizeTest extends MqttServerBaseTest {
 
-  private static final Logger log = LoggerFactory.getLogger(MqttWebsocketServerClientPublishTest.class);
+  private static final Logger log = LoggerFactory.getLogger(MqttServerWebSocketMaxMessageSizeTest.class);
 
   private Async async;
 
   private static final String MQTT_TOPIC = "/my_topic";
-  private static final String MQTT_MESSAGE = "Hello Vert.x MQTT Server";
+  private static final int MQTT_MAX_MESSAGE_SIZE = 50;
+  private static final int MQTT_BIG_MESSAGE_SIZE = 50 + 1;
 
   @Before
   public void before(TestContext context) {
 
-    this.setUp(context, new MqttServerOptions().setUseWebsocket(true));
-  }
+    MqttServerOptions options = new MqttServerOptions();
+    options.setMaxMessageSize(MQTT_MAX_MESSAGE_SIZE);
+    options.setUseWebSocket(true);
 
-  @After
-  public void after(TestContext context) {
-
-    this.tearDown(context);
-  }
-
-  @Test
-  public void publishQos0(TestContext context) {
-
-    this.publish(context, MQTT_TOPIC, MQTT_MESSAGE, 0);
+    this.setUp(context, options);
   }
 
   @Test
-  public void publishQos1(TestContext context) {
-
-    this.publish(context, MQTT_TOPIC, MQTT_MESSAGE, 1);
-  }
-
-  @Test
-  public void publishQos2(TestContext context) {
-
-    this.publish(context, MQTT_TOPIC, MQTT_MESSAGE, 2);
-  }
-
-  private void publish(TestContext context, String topic, String message, int qos) {
+  public void publishBigMessage(TestContext context) {
 
     this.async = context.async();
 
     try {
+
       MemoryPersistence persistence = new MemoryPersistence();
       MqttClient client = new MqttClient(String.format("ws://%s:%d", MQTT_SERVER_HOST, MQTT_SERVER_PORT), "12345", persistence);
       client.connect();
 
-      client.publish(topic, message.getBytes(), qos, false);
+      byte[] message = new byte[MQTT_BIG_MESSAGE_SIZE];
 
-      this.async.await();
+      client.publish(MQTT_TOPIC, message, 0, false);
 
       context.assertTrue(true);
 
@@ -98,36 +80,22 @@ public class MqttWebsocketServerClientPublishTest extends MqttServerBaseTest {
     }
   }
 
+  @After
+  public void after(TestContext context) {
+
+    this.tearDown(context);
+  }
+
   @Override
   protected void endpointHandler(MqttEndpoint endpoint, TestContext context) {
 
-    endpoint.publishHandler(message -> {
+    endpoint.exceptionHandler(t -> {
+      log.error("Exception raised", t);
 
-      log.info("Just received message on [" + message.topicName() + "] payload [" + message.payload().toString(Charset.defaultCharset()) + "] with QoS [" + message.qosLevel() + "]");
-
-      switch (message.qosLevel()) {
-
-        case AT_LEAST_ONCE:
-
-          endpoint.publishAcknowledge(message.messageId());
-          this.async.complete();
-          break;
-
-        case EXACTLY_ONCE:
-
-          endpoint.publishReceived(message.messageId());
-          break;
-
-        case AT_MOST_ONCE:
-
-          this.async.complete();
-          break;
+      if (t instanceof DecoderException) {
+        this.async.complete();
       }
 
-    }).publishReleaseHandler(messageId -> {
-
-      endpoint.publishComplete(messageId);
-      this.async.complete();
     });
 
     endpoint.accept(false);

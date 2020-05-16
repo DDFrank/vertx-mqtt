@@ -197,7 +197,7 @@ public class MqttServerImpl implements MqttServer {
       }
     });
 
-    if(options.isUseWebsocket()) {
+    if(options.isUseWebSocket()) {
 
       pipeline.addBefore("mqttEncoder", "httpServerCodec", new HttpServerCodec());
       pipeline.addAfter("httpServerCodec", "aggregator", new HttpObjectAggregator(65536));

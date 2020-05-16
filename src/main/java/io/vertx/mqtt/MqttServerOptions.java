@@ -51,7 +51,7 @@ public class MqttServerOptions extends NetServerOptions {
   // timeout on CONNECT packet
   private int timeoutOnConnect;
   // if websocket should be used
-  private boolean useWebsocket;
+  private boolean useWebSocket;
 
   /**
    * Default constructor
@@ -267,18 +267,18 @@ public class MqttServerOptions extends NetServerOptions {
   /**
    * enable mqtt over websocket
    *
-   * @param useWebsocket use mqtt over websocket
+   * @param useWebSocket use mqtt over websocket
    * @return  MQTT server options instance
    */
-  public MqttServerOptions setUseWebsocket(boolean useWebsocket) {
-    this.useWebsocket = useWebsocket;
+  public MqttServerOptions setUseWebSocket(boolean useWebSocket) {
+    this.useWebSocket = useWebSocket;
     return this;
   }
 
   /**
    * @return  use mqtt over websocket
    */
-  public boolean isUseWebsocket() {
-    return useWebsocket;
+  public boolean isUseWebSocket() {
+    return useWebSocket;
   }
 }

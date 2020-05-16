@@ -282,7 +282,7 @@ public class VertxMqttServerExamples {
   public void example12(Vertx vertx) {
 
     MqttServerOptions options = new MqttServerOptions()
-      .setUseWebsocket(true);
+      .setUseWebSocket(true);
 
     MqttServer mqttServer = MqttServer.create(vertx, options);
   }

@@ -45,9 +45,9 @@ import java.util.concurrent.TimeUnit;
  * MQTT server testing
  */
 @RunWith(VertxUnitRunner.class)
-public class MqttWebsocketServerTest {
+public class MqttServerWebSocketTest {
 
-  private static final Logger log = LoggerFactory.getLogger(MqttWebsocketServerTest.class);
+  private static final Logger log = LoggerFactory.getLogger(MqttServerWebSocketTest.class);
 
   protected static final String MQTT_SERVER_HOST = "localhost";
   protected static final int MQTT_SERVER_PORT = 1883;
@@ -83,7 +83,7 @@ public class MqttWebsocketServerTest {
 
       for (int i = 0; i < numServers; i++) {
 
-        MqttServer server = MqttServer.create(this.vertx, new MqttServerOptions().setHost(MQTT_SERVER_HOST).setPort(MQTT_SERVER_PORT).setUseWebsocket(true));
+        MqttServer server = MqttServer.create(this.vertx, new MqttServerOptions().setHost(MQTT_SERVER_HOST).setPort(MQTT_SERVER_PORT).setUseWebSocket(true));
         servers.add(server);
 
         server.endpointHandler(endpoint -> {

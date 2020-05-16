@@ -143,7 +143,7 @@
           </includes>
           <excludes>
             <exclude>**/MqttServer*Test.java</exclude>
-            <exclude>**/MqttWebsocketServer*Test.java</exclude>
+            <exclude>**/MqttServerWebSocket*Test.java</exclude>
           </excludes>
           <systemProperties>
             <mqtt.server.host>${mqtt.server.host}</mqtt.server.host>
